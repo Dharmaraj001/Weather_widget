@@ -6,6 +6,36 @@ export default function Searchbox() {
 
     let [city, setcity] = useState("")
 
+    const API_URL = "https://api.openweathermap.org/data/2.5/weather"
+    const API_KEY = "85756b0ac79b654fdadf9c9705efa2d4"
+
+    let getWeatherInfo = async (city) => {
+    try {
+        let response = await fetch(
+            `${API_URL}?q=${city},IN&appid=${API_KEY}&units=metric`
+        );
+
+        if (!response.ok) {
+            throw new Error("City not found");
+        }
+
+        let jsonres = await response.json();
+        console.log(jsonres);
+        let result = {
+          temp : jsonres.main.temp,
+          tempmin : jsonres.main.temp_min,
+          tempmax : jsonres.main.temp_max,
+          humidity: jsonres.main.humidity,
+          feelslike : jsonres.main.feels_like,
+          weather : jsonres.weather[0].description,
+        }
+        console.log(result);
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+
     let handlechange = (evt) => {
         setcity(evt.target.value)
     }
@@ -14,6 +44,7 @@ export default function Searchbox() {
         evt.preventDefault();
         console.log(city);
         setcity("")
+        getWeatherInfo(city);
     }
 
   return (
