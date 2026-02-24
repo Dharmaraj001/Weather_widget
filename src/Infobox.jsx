@@ -6,21 +6,27 @@ import Typography from "@mui/material/Typography";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
-export default function Infobox() {
+export default function Infobox({info, loading}) {
+    if (loading) {
+  return (
+    <div className="flex justify-center items-center mt-10">
+      <CircularProgress size={60} thickness={4} />
+    </div>
+  );
+}
+
+     if (!info){
+   return (
+      <div className="text-center mt-6 text-gray-600 text-xl font-semibold">
+         No such place found
+      </div>
+   );
+}
 
   const image =
-    "https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg";
-
-  let info = {
-    city: "Delhi",
-    feelsLike: 24.5,
-    Temp: 20,
-    TempMin: 18,
-    TempMax: 27,
-    Humidity: 47,
-    Wheather: "Haze",
-  };
+    "https://images.unsplash.com/photo-1592210454359-9043f067919b";
 
   return (
     <div className="flex justify-center mt-6 px-4">

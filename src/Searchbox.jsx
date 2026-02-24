@@ -1,43 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Infobox from "./Infobox";
 
 export default function Searchbox() {
 
+  let [weatherInfo, setWeatherInfo] = useState(null);
+
   let [city, setcity] = useState("");
+
+  let [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+    getWeatherInfo("Bangalore"); // default city
+  }, []);
 
   const API_URL = "https://api.openweathermap.org/data/2.5/weather";
   const API_KEY = "85756b0ac79b654fdadf9c9705efa2d4";
 
-  let getWeatherInfo = async (city) => {
-    try {
-      let response = await fetch(
-        `${API_URL}?q=${city},IN&appid=${API_KEY}&units=metric`
-      );
+ let getWeatherInfo = async (city) => {
 
-      if (!response.ok) {
-        throw new Error("City not found");
-      }
+  setLoading(true);
 
-      let jsonres = await response.json();
+  try {
+    let response = await fetch(
+      `${API_URL}?q=${city}&appid=${API_KEY}&units=metric`
+    );
 
-      let result = {
-        city: city,
-        temp: jsonres.main.temp,
-        tempmin: jsonres.main.temp_min,
-        tempmax: jsonres.main.temp_max,
-        humidity: jsonres.main.humidity,
-        feelslike: jsonres.main.feels_like,
-        weather: jsonres.weather[0].description,
-      };
-
-      console.log(result);
-
-    } catch (err) {
-      console.log(err.message);
+    if (!response.ok) {
+      throw new Error("City not found");
     }
-  };
+
+    let jsonres = await response.json();
+
+    let result = {
+      city: jsonres.name,
+      country: jsonres.sys.country,
+      Temp: jsonres.main.temp,
+      TempMin: jsonres.main.temp_min,
+      TempMax: jsonres.main.temp_max,
+      Humidity: jsonres.main.humidity,
+      feelsLike: jsonres.main.feels_like,
+      Wheather: jsonres.weather[0].description,
+    };
+
+    setWeatherInfo(result);
+
+  } catch (err) {
+    console.log(err.message);
+    setWeatherInfo(null);
+  } finally {
+    setLoading(false);   // ⭐ THIS WAS MISSING
+  }
+};
 
   let handlechange = (evt) => {
     setcity(evt.target.value);
@@ -86,7 +101,7 @@ export default function Searchbox() {
 
         {/* Info Box inside same card */}
         <div className="w-full mt-4">
-          <Infobox />
+          <Infobox info={weatherInfo} loading={loading} />
         </div>
 
       </div>
