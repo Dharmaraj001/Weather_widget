@@ -1,66 +1,71 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Infobox from "./Infobox";
 
 export default function Searchbox() {
 
-    let [city, setcity] = useState("")
+  let [city, setcity] = useState("");
 
-    const API_URL = "https://api.openweathermap.org/data/2.5/weather"
-    const API_KEY = "85756b0ac79b654fdadf9c9705efa2d4"
+  const API_URL = "https://api.openweathermap.org/data/2.5/weather";
+  const API_KEY = "85756b0ac79b654fdadf9c9705efa2d4";
 
-    let getWeatherInfo = async (city) => {
+  let getWeatherInfo = async (city) => {
     try {
-        let response = await fetch(
-            `${API_URL}?q=${city},IN&appid=${API_KEY}&units=metric`
-        );
+      let response = await fetch(
+        `${API_URL}?q=${city},IN&appid=${API_KEY}&units=metric`
+      );
 
-        if (!response.ok) {
-            throw new Error("City not found");
-        }
+      if (!response.ok) {
+        throw new Error("City not found");
+      }
 
-        let jsonres = await response.json();
-        console.log(jsonres);
-        let result = {
-          temp : jsonres.main.temp,
-          tempmin : jsonres.main.temp_min,
-          tempmax : jsonres.main.temp_max,
-          humidity: jsonres.main.humidity,
-          feelslike : jsonres.main.feels_like,
-          weather : jsonres.weather[0].description,
-        }
-        console.log(result);
+      let jsonres = await response.json();
+
+      let result = {
+        city: city,
+        temp: jsonres.main.temp,
+        tempmin: jsonres.main.temp_min,
+        tempmax: jsonres.main.temp_max,
+        humidity: jsonres.main.humidity,
+        feelslike: jsonres.main.feels_like,
+        weather: jsonres.weather[0].description,
+      };
+
+      console.log(result);
+
     } catch (err) {
-        console.log(err.message);
+      console.log(err.message);
     }
-}
+  };
 
+  let handlechange = (evt) => {
+    setcity(evt.target.value);
+  };
 
-    let handlechange = (evt) => {
-        setcity(evt.target.value)
-    }
-
-    let handlesubmit = (evt) =>{
-        evt.preventDefault();
-        console.log(city);
-        setcity("")
-        getWeatherInfo(city);
-    }
+  let handlesubmit = (evt) => {
+    evt.preventDefault();
+    getWeatherInfo(city);
+    setcity("");
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300">
-      
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-[350px] text-center">
-        
-        <h3 className="text-2xl font-semibold text-gray-700 mb-6">
-          Search Weather
-        </h3>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-200 via-blue-300 to-blue-400">
 
-        <form onSubmit={handlesubmit} className="flex flex-col gap-4">
-          
+      {/* Card Container */}
+      <div className="bg-white shadow-2xl rounded-3xl p-8 w-[650px] flex flex-col items-center gap-6">
+
+        {/* Title */}
+        <h1 className="text-3xl font-bold text-gray-700">
+          Weather App 🌤
+        </h1>
+
+        {/* Form */}
+        <form onSubmit={handlesubmit} className="w-full flex flex-col gap-4">
+
           <TextField
             id="City"
-            label="City"
+            label="Enter City Name"
             variant="outlined"
             required
             fullWidth
@@ -71,12 +76,18 @@ export default function Searchbox() {
           <Button
             variant="contained"
             type="submit"
-            className="!bg-blue-500 hover:!bg-blue-600 !text-white !font-semibold !py-2 !rounded-lg"
+            fullWidth
+            className="!bg-blue-500 hover:!bg-blue-600 !text-white !font-semibold !py-2 !rounded-lg !shadow-md"
           >
-            Search
+            Get Weather
           </Button>
 
         </form>
+
+        {/* Info Box inside same card */}
+        <div className="w-full mt-4">
+          <Infobox />
+        </div>
 
       </div>
 
